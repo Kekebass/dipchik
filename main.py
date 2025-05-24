@@ -38,3 +38,14 @@ train_df.dtypes
 
 # Viewing rows and columns
 train_df.shape
+
+# Exploratory data analysis (EDA)
+print("\nDescriptive statistics of the training set:")
+train_df.describe().T
+
+# Analysis of categorical and numerical variables
+categorical_features = train_df.select_dtypes(include=['object']).columns
+numerical_features = train_df.select_dtypes(include=[np.number]).columns
+
+print("\nCategorical Variables:", categorical_features)
+print("Numeric Variables:", numerical_features)
