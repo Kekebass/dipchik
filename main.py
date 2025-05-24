@@ -49,3 +49,23 @@ numerical_features = train_df.select_dtypes(include=[np.number]).columns
 
 print("\nCategorical Variables:", categorical_features)
 print("Numeric Variables:", numerical_features)
+
+# Analysis of categorical variables
+for col in categorical_features:
+    print(f"\nDistribution of categorical variable {col}:")
+    print(train_df[col].value_counts())
+
+    # Analysis of target variable 'Target'
+    print("\nDistribution of target variable 'Target':")
+    print(train_df['Response'].value_counts())
+    plt.figure(figsize=(10, 6))
+    sns.countplot(data=train_df, x='Response')
+    plt.title("Distribution of Target Variable 'Target'")
+    plt.grid(False)
+    plt.show()
+
+plt.figure(figsize=(10, 6))
+sns.boxplot(x='Vehicle_Age', y='Annual_Premium', hue='Response', data=train_df)
+plt.title('Boxplot of Annual Premium by Vehicle Age and Response')
+plt.grid(False)
+plt.show()
