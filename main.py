@@ -69,3 +69,15 @@ sns.boxplot(x='Vehicle_Age', y='Annual_Premium', hue='Response', data=train_df)
 plt.title('Boxplot of Annual Premium by Vehicle Age and Response')
 plt.grid(False)
 plt.show()
+
+# Group data by gender and calculate the total annual premium for each group
+total_premium_by_gender = train_df.groupby('Gender')['Annual_Premium'].sum().reset_index()
+
+# View total prize by gender
+plt.figure(figsize=(10, 6))
+sns.barplot(x='Gender', y='Annual_Premium', data=total_premium_by_gender)
+plt.title('Total Prize for Sex')
+plt.xlabel('Sex')
+plt.ylabel('Annual Premium Total')
+plt.grid(False)
+plt.show()
