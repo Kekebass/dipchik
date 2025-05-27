@@ -81,3 +81,19 @@ plt.xlabel('Sex')
 plt.ylabel('Annual Premium Total')
 plt.grid(False)
 plt.show()
+
+# Create age ranges
+train_df['Age_Bucket'] = pd.cut(train_df['Age'], bins=[18, 25, 35, 50, np.inf], labels=['18-25', '26-35', ' 36-50', '51+'])
+
+# Group data by age group and gender, and calculate the average annual premium for each group
+average_premium_by_age_gender = train_df.groupby(['Age_Bucket', 'Gender'])['Annual_Premium'].mean().reset_index()
+
+# View the average annual premium by age group and gender
+plt.figure(figsize=(20, 10))
+sns.barplot(x='Age_Bucket', y='Annual_Premium', hue='Gender', data=average_premium_by_age_gender)
+plt.title('Average Annual Award by Age Group and Sex')
+plt.xlabel('Age Range')
+plt.ylabel('Average Annual Premium')
+plt.legend(title='Sex')
+plt.grid(False)
+plt.show()
