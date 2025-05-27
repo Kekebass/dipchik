@@ -113,3 +113,22 @@ plt.ylabel('Average Annual Premium')
 plt.legend(title='Sex')
 plt.grid(False)
 plt.show()
+
+ Categorical variables to iterate
+categorical_variables = ['Gender', 'Vehicle_Damage', 'Vehicle_Age', 'Response']
+
+# Figure size
+plt.figure(figsize=(15, 10))
+
+# Loop over categorical variables
+for i, var in enumerate(categorical_variables, 1):
+ plt.subplot(2, 2, i) # Subplots 2x2
+ sns.boxplot(data=train_df, x=var, y='Annual_Premium', palette='viridis')
+ plt.title(f'Annual Award for {var}')
+ plt.xlabel(var)
+ plt.ylabel('Annual Award')
+ plt.xticks(rotation=45)
+
+plt.tight_layout()
+plt.grid(False)
+plt.show()
