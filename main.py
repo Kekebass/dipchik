@@ -97,3 +97,19 @@ plt.ylabel('Average Annual Premium')
 plt.legend(title='Sex')
 plt.grid(False)
 plt.show()
+
+# Group data by gender and previous insurance status, and calculate the average annual premium for each group
+average_premium_by_gender_insured = train_df.groupby(['Gender', 'Previously_Insured'])['Annual_Premium'].mean().reset_index()
+
+# Transform the 'Previously_Insured' variable into a more readable category
+average_premium_by_gender_insured['Previously_Insured'] = average_premium_by_gender_insured['Previously_Insured'].map({0: 'No', 1: 'Yes'})
+
+# View average annual premium by gender and previous insurance status
+plt.figure(figsize=(10, 6))
+sns.barplot(x='Previously_Insured', y='Annual_Premium', hue='Gender', data=average_premium_by_gender_insured)
+plt.title('Average Annual Premium by Previous Insurance Status and Gender')
+plt.xlabel('Previous Insurance')
+plt.ylabel('Average Annual Premium')
+plt.legend(title='Sex')
+plt.grid(False)
+plt.show()
