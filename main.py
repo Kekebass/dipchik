@@ -223,3 +223,29 @@ for i, status in enumerate(statuses, 1):
 plt.tight_layout()
 plt.grid(False)
 plt.show()
+
+# Group by age, gender and vehicle age, adding annual premiums
+grouped_data = train_df.groupby(['Age', 'Gender', 'Vehicle_Age'])['Annual_Premium'].sum().reset_index()
+
+# Convert the 'Gender' column to string for better visualization
+grouped_data['Gender'] = grouped_data['Gender'].map({'Male': 'Man', 'Female': 'Woman'})
+
+# Configure the size of the figure
+plt.figure(figsize=(30.5, 10))
+
+# Loop to create graphs separated by vehicle age
+vehicle_ages = grouped_data['Vehicle_Age'].unique()
+
+for i, vehicle_age in enumerate(vehicle_ages, 1):
+    plt.subplot(2, 2, i)
+    subset = grouped_data[grouped_data['Vehicle_Age'] == vehicle_age]
+    sns.barplot(data=subset, x='Age', y='Annual_Premium', hue='Gender', palette='viridis')
+    plt.title(f'Total Annual Premium by Age and Sex (Vehicle Age: {vehicle_age})')
+    plt.xlabel('Age')
+    plt.ylabel('Annual Premium Total')
+    plt.legend(title='Genre')
+    plt.xticks(rotation=50)
+
+plt.tight_layout()
+plt.grid(False)
+plt.show()
