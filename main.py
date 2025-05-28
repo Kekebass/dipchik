@@ -114,7 +114,7 @@ plt.legend(title='Sex')
 plt.grid(False)
 plt.show()
 
- Categorical variables to iterate
+#Categorical variables to iterate
 categorical_variables = ['Gender', 'Vehicle_Damage', 'Vehicle_Age', 'Response']
 
 # Figure size
@@ -187,3 +187,39 @@ statuses = train_df['Previously_Insured'].unique()
 
 # Figure size
 plt.figure(figsize=(15, 8))
+
+# Group by vehicle age and insurance status, adding annual premiums
+grouped_data = train_df.groupby(['Vehicle_Age', 'Previously_Insured'])['Annual_Premium'].sum().reset_index()
+
+# Convert the 'Previously_Insured' column to string for better visualization
+grouped_data['Previously_Insured'] = grouped_data['Previously_Insured'].astype(str)
+
+# Grouped bar chart
+plt.figure(figsize=(12, 6))
+sns.barplot(data=grouped_data, x='Vehicle_Age', y='Annual_Premium', hue='Previously_Insured', palette='viridis')
+plt.title('Total Annual Premium by Vehicle Age and Insurance Status')
+plt.xlabel('Vehicle Age')
+plt.ylabel('Annual Premium Total')
+plt.legend(title='Previously Insured')
+plt.grid(False)
+plt.show()
+
+# List of insurance status
+statuses = train_df['Previously_Insured'].unique()
+
+# Figure size
+plt.figure(figsize=(15, 8))
+
+# Loop about insurance statuses
+for i, status in enumerate(statuses, 1):
+ plt.subplot(1, 2, i)
+ status_data = df[df['Previously_Insured'] == status]
+ status_grouped = status_data.groupby('Vehicle_Age')['Annual_Premium'].sum().reset_index()
+ sns.barplot(data=status_grouped, x='Vehicle_Age', y='Annual_Premium', palette='viridis')
+ plt.title(f'Total Annual Premium by Vehicle Age (Previously Insured: {status})')
+ plt.xlabel('Vehicle Age')
+ plt.ylabel('Annual Premium Total')
+
+plt.tight_layout()
+plt.grid(False)
+plt.show()
