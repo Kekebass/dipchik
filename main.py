@@ -288,3 +288,19 @@ grouped_data = train_df.groupby(['Vehicle_Age', 'Previously_Insured'])['Annual_P
 
 # Convert the 'Previously_Insured' column to string for better visualization
 grouped_data['Previously_Insured'] = grouped_data['Previously_Insured'].astype(str)
+
+# Grouped bar chart
+plt.figure(figsize=(12, 6))
+sns.barplot(data=grouped_data, x='Vehicle_Age', y='Annual_Premium', hue='Previously_Insured', palette='viridis')
+plt.title('Total Annual Premium by Vehicle Age and Insurance Status')
+plt.xlabel('Vehicle Age')
+plt.ylabel('Annual Premium Total')
+plt.legend(title='Previously Insured')
+plt.grid(False)
+plt.show()
+
+# List of insurance status
+statuses = train_df['Previously_Insured'].unique()
+
+# Figure size
+plt.figure(figsize=(15, 8))
