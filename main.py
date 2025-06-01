@@ -359,3 +359,20 @@ plt.figure(figsize=(14, 10))
 sns.heatmap(correlation_matrix, annot=True, cmap='viridis', fmt='.2f')
 plt.title('Correlation Matrix Heatmap')
 plt.show()
+
+# Select numeric columns
+numeric_columns = ["Age", "Annual_Premium", "Vintage"]
+
+# Configure the size of the figure
+plt.figure(figsize=(18, 6))
+
+# Loop to create boxplots for each numeric column
+for i, column in enumerate(numeric_columns, 1):
+    plt.subplot(1, 3, i)
+    sns.boxplot(data=train_df, y=column, palette='viridis')
+    plt.title(f'Boxplot of {column}')
+    plt.ylabel(column)
+
+plt.tight_layout()
+plt.grid(False)
+plt.show()
