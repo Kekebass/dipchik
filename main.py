@@ -298,3 +298,23 @@ plt.ylabel('Annual Premium Total')
 plt.legend(title='Previously Insured')
 plt.grid(False)
 plt.show()
+
+# List of insurance status
+statuses = train_df['Previously_Insured'].unique()
+
+# Figure size
+plt.figure(figsize=(15, 8))
+
+# Loop about insurance statuses
+for i, status in enumerate(statuses, 1):
+ plt.subplot(1, 2, i)
+ status_data = df[df['Previously_Insured'] == status]
+ status_grouped = status_data.groupby('Vehicle_Age')['Annual_Premium'].sum().reset_index()
+ sns.barplot(data=status_grouped, x='Vehicle_Age', y='Annual_Premium', palette='viridis')
+ plt.title(f'Total Annual Premium by Vehicle Age (Previously Insured: {status})')
+ plt.xlabel('Vehicle Age')
+ plt.ylabel('Annual Premium Total')
+
+plt.tight_layout()
+plt.grid(False)
+plt.show()
