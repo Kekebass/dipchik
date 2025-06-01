@@ -269,7 +269,7 @@ genders = train_df['Gender'].unique()
 # Figure size
 plt.figure(figsize=(15, 8))
 
-# Loop over genres
+ Loop over genres
 for i, gender in enumerate(genders, 1):
  plt.subplot(1, 2, i)
  gender_data = train_df[train_df['Gender'] == gender]
@@ -282,25 +282,3 @@ for i, gender in enumerate(genders, 1):
 plt.tight_layout()
 plt.grid(False)
 plt.show()
-
-# Group by vehicle age and insurance status, adding annual premiums
-grouped_data = train_df.groupby(['Vehicle_Age', 'Previously_Insured'])['Annual_Premium'].sum().reset_index()
-
-# Convert the 'Previously_Insured' column to string for better visualization
-grouped_data['Previously_Insured'] = grouped_data['Previously_Insured'].astype(str)
-
-# Grouped bar chart
-plt.figure(figsize=(12, 6))
-sns.barplot(data=grouped_data, x='Vehicle_Age', y='Annual_Premium', hue='Previously_Insured', palette='viridis')
-plt.title('Total Annual Premium by Vehicle Age and Insurance Status')
-plt.xlabel('Vehicle Age')
-plt.ylabel('Annual Premium Total')
-plt.legend(title='Previously Insured')
-plt.grid(False)
-plt.show()
-
-# List of insurance status
-statuses = train_df['Previously_Insured'].unique()
-
-# Figure size
-plt.figure(figsize=(15, 8))
