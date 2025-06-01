@@ -344,3 +344,18 @@ for i, vehicle_age in enumerate(vehicle_ages, 1):
 plt.tight_layout()
 plt.grid(False)
 plt.show()
+
+# Select the specified columns
+columns_of_interest = ["id", "Age", "Driving_License", "Region_Code", "Previously_Insured", "Annual_Premium", "Policy_Sales_Channel", "Vintage", "Response"]
+df_selected = df[columns_of_interest]
+
+# Calculate the correlation matrix
+correlation_matrix = df_selected.corr()
+
+# Configure the size of the figure
+plt.figure(figsize=(14, 10))
+
+# Correlation heatmap
+sns.heatmap(correlation_matrix, annot=True, cmap='viridis', fmt='.2f')
+plt.title('Correlation Matrix Heatmap')
+plt.show()
