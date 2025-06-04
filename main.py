@@ -420,3 +420,24 @@ df_cleaned = remove_outliers(train_df, numeric_columns)
 # Check the DataFrame dimension after removing outliers
 print(f"Original dimension: {train_df.shape}")
 print(f"Dimension after removing outliers: {df_cleaned.shape}")
+
+# View the first records of the cleaned DataFrame
+df_cleaned.head()
+
+# Select numeric columns
+numeric_columns = ["Age", "Annual_Premium", "Vintage"]
+
+# Configure the size of the figure
+plt.figure(figsize=(18, 6))
+
+# Loop to create fiddle plots for each numeric column, separated by Response
+for i, column in enumerate(numeric_columns, 1):
+    plt.subplot(1, 3, i)
+    sns.boxplot(data=df_cleaned, x='Response', y=column, hue="Response", palette='viridis')
+    plt.title(f'Violin Chart of {column} by Response')
+    plt.xlabel('Response')
+    plt.ylabel(column)
+
+plt.tight_layout()
+plt.grid(False)
+plt.show()
