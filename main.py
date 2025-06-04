@@ -402,3 +402,21 @@ for column in numeric_columns:
 
 # Select numeric columns
 numeric_columns = ["Age", "Annual_Premium", "Vintage"]
+
+def remove_outliers(train_df, columns):
+    for column in columns:
+        Q1 = train_df[column].quantile(0.25)
+        Q3 = train_df[column].quantile(0.75)
+        IQR = Q3 - Q1
+        lower_bound = Q1 - 1.5 * IQR
+        upper_bound = Q3 + 1.5 * IQR
+        train_df = train_df[(train_df[column] >= lower_bound) & (train_df[column] <= upper_bound)]
+    return train_df
+
+
+# Remove outliers from the DataFrame
+df_cleaned = remove_outliers(train_df, numeric_columns)
+
+# Check the DataFrame dimension after removing outliers
+print(f"Original dimension: {train_df.shape}")
+print(f"Dimension after removing outliers: {df_cleaned.shape}")
