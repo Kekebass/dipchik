@@ -394,3 +394,11 @@ for i, column in enumerate(numeric_columns, 1):
 plt.tight_layout()
 plt.grid(False)
 plt.show()
+
+# Descriptive statistics separated by Response
+for column in numeric_columns:
+    print(f'\nDescriptive Statistics of {column} by Response:')
+    print(train_df.groupby('Response')[column].describe())
+
+# Select numeric columns
+numeric_columns = ["Age", "Annual_Premium", "Vintage"]
