@@ -441,3 +441,48 @@ for i, column in enumerate(numeric_columns, 1):
 plt.tight_layout()
 plt.grid(False)
 plt.show()
+
+# Descriptive statistics separated by Response
+for column in numeric_columns:
+    print(f'\nDescriptive Statistics of {column} by Response:')
+    print(df_cleaned.groupby('Response')[column].describe())
+
+
+def optimize_memory_usage(df):
+    df = df.copy()
+
+    print("Memory usage before optimization:")
+    print(df.memory_usage(deep=True))
+    print()
+
+    # Convert columns to 'category' type if they are present
+    categorical_columns = [
+        'Gender', 'Driving_License', 'Region_Code', 'Previously_Insured',
+        'Vehicle_Age', 'Vehicle_Damage', 'Policy_Sales_Channel',
+        'Response', 'Age_Bucket'
+    ]
+
+    for col in categorical_columns:
+        if col in df.columns:
+            df[col] = df[col].astype('category')
+
+    # Optimize numeric columns
+    if 'Age' in df.columns:
+        df['Age'] = pd.to_numeric(df['Age'], downcast='integer')
+
+    if 'Annual_Premium' in df.columns:
+        df['Annual_Premium'] = pd.to_numeric(df['Annual_Premium'], downcast='integer')
+
+    if 'Vintage' in df.columns:
+        df['Vintage'] = pd.to_numeric(df['Vintage'], downcast='integer')
+
+    print("Memory usage after optimization:")
+    print(df.memory_usage(deep=True))
+    print()
+
+    print("DataFrame info after optimization:")
+    df.info(memory_usage='deep')
+    print()
+
+    return df_cleaned
+
