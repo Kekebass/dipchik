@@ -376,3 +376,21 @@ for i, column in enumerate(numeric_columns, 1):
 plt.tight_layout()
 plt.grid(False)
 plt.show()
+
+# Select numeric columns
+numeric_columns = ["Age", "Annual_Premium", "Vintage"]
+
+# Configure the size of the figure
+plt.figure(figsize=(18, 6))
+
+# Loop to create fiddle plots for each numeric column, separated by Response
+for i, column in enumerate(numeric_columns, 1):
+    plt.subplot(1, 3, i)
+    sns.boxplot(data=train_df, x='Response', y=column, palette='viridis')
+    plt.title(f'Violin Chart of {column} by Response')
+    plt.xlabel('Response')
+    plt.ylabel(column)
+
+plt.tight_layout()
+plt.grid(False)
+plt.show()
