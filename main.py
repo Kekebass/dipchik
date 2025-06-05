@@ -486,3 +486,15 @@ def optimize_memory_usage(df):
 
     return df_cleaned
 
+# Optimizing the DataFrames
+df_cleaned_optimized_train = optimize_memory_usage(df_cleaned)
+test_df_optimized_test = optimize_memory_usage(test_df)
+df_optimized = optimize_memory_usage(df)
+
+# Copy dataset
+train_df = df_cleaned_optimized_train.copy()
+test_df = df_optimized.copy()
+
+# 1. Handling Missing Values
+print("Number of missing values ​​per column:")
+print(df_optimized.isnull().sum())
