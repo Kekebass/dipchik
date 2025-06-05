@@ -498,3 +498,9 @@ test_df = df_optimized.copy()
 # 1. Handling Missing Values
 print("Number of missing values ​​per column:")
 print(df_optimized.isnull().sum())
+
+# View missing values
+plt.figure(figsize=(10, 6))
+sns.heatmap(df_optimized.isnull(), cbar=False, cmap="viridis")
+plt.title("Viewing Missing Values in the Training Set")
+plt.show()
