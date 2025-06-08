@@ -534,3 +534,25 @@ X.shape
 
 # Viewing rows and columns
 y.shape
+
+# Importing libraries
+from sklearn.model_selection import train_test_split
+
+# Training and testing division
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Viewing training data
+print("Viewing rows and columns given by X train", X_train.shape)
+
+# Viewing test data
+print("Viewing rows and columns given y train", y_train.shape)
+
+# Converting categorical columns to dummy variables
+X_train = pd.get_dummies(X_train)
+X_test = pd.get_dummies(X_test)
+
+# Viewing training data
+print("Viewing rows and columns given by X train", X_train.shape)
+
+# Viewing test data
+print("Viewing rows and columns given y train", y_train.shape)
