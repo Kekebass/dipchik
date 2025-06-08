@@ -504,3 +504,33 @@ plt.figure(figsize=(10, 6))
 sns.heatmap(df_optimized.isnull(), cbar=False, cmap="viridis")
 plt.title("Viewing Missing Values in the Training Set")
 plt.show()
+
+# Importing library
+from sklearn.preprocessing import LabelEncoder
+
+# Encode categorical variables
+label_encoder = LabelEncoder()
+df_optimized['Gender'] = label_encoder.fit_transform(df_optimized['Gender'])
+df_optimized['Vehicle_Age'] = label_encoder.fit_transform(df_optimized['Vehicle_Age'])
+df_optimized['Vehicle_Damage'] = label_encoder.fit_transform(df_optimized['Vehicle_Damage'])
+
+# Viewing
+label_encoder
+
+# View the first DataFrame records after encoding
+df_optimized
+
+# Fill missing values
+df_optimized.fillna(method='ffill', inplace=True)
+df_optimized.fillna(method='ffill', inplace=True)
+
+# Resources
+X = df_optimized.drop(columns=['Response'])
+
+# Target variable
+y = df_optimized['Response']
+# Viewing rows and columns x
+X.shape
+
+# Viewing rows and columns
+y.shape
