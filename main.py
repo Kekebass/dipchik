@@ -636,3 +636,55 @@ for model_name, model in models_with_feature_importances:
     plt.ylabel('Feature')
     plt.grid(False)
     plt.show()
+
+# plot confusion matrix
+from sklearn.metrics import accuracy_score, confusion_matrix
+
+# Evaluate each model
+for i, model in enumerate(models):
+
+    # Calculate and plot the confusion matrix
+    cm = confusion_matrix(y_test, model.predict(X_test))
+    plt.figure()
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", cbar=False,
+                xticklabels=["Not Transported", "Transported"],
+                yticklabels=["Not Transported", "Transported"])
+    plt.xlabel("Predicted")
+    plt.ylabel("True")
+    plt.title(f"Confusion Matrix - Model {i + 1}: {type(model).__name__}")
+    plt.show()
+    print("------------------")
+
+# ROC curve models
+from sklearn.metrics import (
+    accuracy_score, precision_score, recall_score, f1_score,
+    roc_curve, roc_auc_score, classification_report, confusion_matrix
+)
+
+
+# Evaluate each model
+for i, model in enumerate(models):
+
+    # Calculate positive class probabilities
+    y_probs = model.predict_proba(X_test)[:, 1]
+
+    # Calculate the ROC curve
+    fpr, tpr, thresholds = roc_curve(y_test, y_probs)
+
+    # Calculate the area under the ROC curve (AUC)
+    auc = roc_auc_score(y_test, y_probs)
+
+    # Plot the ROC curve
+    plt.figure()
+    plt.plot(fpr, tpr, color='blue', lw=2, label=f'AUC = {auc:.2f}')
+    plt.plot([0, 1], [0, 1], color='gray', linestyle='--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title(f'ROC Curve - Model {i + 1}: {type(model).__name__}')
+    plt.legend(loc="lower right")
+    plt.grid(False)
+    plt.show()
+
+    print("------------------")
