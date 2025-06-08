@@ -556,3 +556,83 @@ print("Viewing rows and columns given by X train", X_train.shape)
 
 # Viewing test data
 print("Viewing rows and columns given y train", y_train.shape)
+
+# Importing machine learning model library
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier
+from sklearn.metrics import accuracy_score
+from xgboost import XGBClassifier
+from lightgbm import LGBMClassifier
+
+# Importing library for metrics machine learning models
+from sklearn.metrics import accuracy_score
+
+# Models to be evaluated
+models = [GaussianNB(), # Naive Bayes Model
+          DecisionTreeClassifier(random_state=42), # Decision Tree Model
+          #RandomForestClassifier(n_estimators=100, random_state=42), # Random forest model
+          LogisticRegression(random_state=50), # Logistic regression model
+          AdaBoostClassifier(random_state=45), # Ada Boost Model
+          XGBClassifier(), # XGBoost Model Parameter tree_method='gpu_hist' for XGBoost GPU
+          LGBMClassifier()] # LightGBM Model Parameter device='gpu' for LightGBM GPU
+
+# Evaluate each model
+for i, model in enumerate(models):
+    model.fit(X_train, y_train)
+    train_accuracy = accuracy_score(y_train, model.predict(X_train))
+    test_accuracy = accuracy_score(y_test, model.predict(X_test))
+    print(model)
+    print()
+    print(f"Model {i+1}: {type(model).__name__}")
+    print()
+    print(f"Training Accuracy: {train_accuracy}")
+    print(f"Testing Accuracy: {test_accuracy}")
+    print("------------------")
+
+# Step 6: Evaluate the model
+# Step 7: Make predictions on the test set
+predictions = model.predict(X_test)
+
+# Train models that support feature importances
+
+# Set Seaborn style
+sns.set_palette("Set2")
+
+models_with_feature_importances = [("DecisionTreeClassifier", DecisionTreeClassifier(random_state=42)),
+                                 #  (
+                                 #  "RandomForestClassifier", RandomForestClassifier(n_estimators=100, random_state=42)),
+                                   ("XGBClassifier", XGBClassifier(random_state=42)),
+                                   ("LGBMClassifier", LGBMClassifier(random_state=42))]
+
+# Iterate over models
+for model_name, model in models_with_feature_importances:
+
+    # Train model
+    model.fit(X_train, y_train)
+
+    # Get importance of features
+    if hasattr(model, 'feature_importances_'):
+        feature_importances = model.feature_importances_
+    else:
+        # If the model does not have feature_importances_, continue to the next model
+        print(f"{model_name} does not support feature importances.")
+        continue
+
+    # Create DataFrame for easier viewing
+    feature_importances_df = pd.DataFrame({'Feature': X_train.columns,
+                                           'Importance': feature_importances})
+
+    # Sort by importance
+    feature_importances_df = feature_importances_df.sort_values(by='Importance', ascending=False)
+
+    # Plot
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x='Importance', y='Feature', data=feature_importances_df[:10])
+    plt.title(f"Top 10 Features - {model_name}")
+    plt.xlabel('Importance')
+    plt.ylabel('Feature')
+    plt.grid(False)
+    plt.show()
