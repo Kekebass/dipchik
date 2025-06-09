@@ -688,3 +688,25 @@ for i, model in enumerate(models):
     plt.show()
 
     print("------------------")
+
+# Evaluate each model
+for i, model in enumerate(models):
+
+    # Gerar relatório de classificação
+    report = classification_report(y_test, model.predict(X_test))
+    print()
+    print("Classification Report:")
+    print()
+    print(report)
+    print()
+
+    print("=======================================")
+
+# Viewing train_df dataset
+train_df.head()
+
+# Viewing train_df dataset
+train_df.head()
+
+# Viewing test_df dataset
+test_df.head()
