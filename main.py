@@ -710,3 +710,55 @@ train_df.head()
 
 # Viewing test_df dataset
 test_df.head()
+
+# Importing label encoder library
+from sklearn.preprocessing import LabelEncoder
+
+# # Copy the original data to avoid modifying the original DataFrame
+train_df = df_cleaned_optimized_train.copy()
+
+# Encode categorical variables
+label_encoder = LabelEncoder()
+
+# Apply LabelEncoder to each categorical variable
+for col in ['Gender', 'Vehicle_Age', 'Vehicle_Damage', 'Age_Bucket']:
+    train_df[col] = label_encoder.fit_transform(train_df[col])
+
+# Encode categorical variables
+label_encoder = LabelEncoder()
+train_df['Gender'] = label_encoder.fit_transform(train_df['Gender'])
+train_df['Vehicle_Age'] = label_encoder.fit_transform(train_df['Vehicle_Age'])
+train_df['Vehicle_Damage'] = label_encoder.fit_transform(train_df['Vehicle_Damage'])
+# df_cleaned_optimized_train['Age_Bucket'] = label_encoder.fit_transform(df_cleaned_optimized_train['Age_Bucket'])
+
+# Viewing dataset
+label_encoder
+
+# # Delete the 'Name' column
+train_df.drop(columns=['id'], inplace=True)
+
+# View the first DataFrame records after column deletion
+train_df.head()
+
+# Split data into feature set (X) and target variable (y)
+
+# Resources
+X1 = train_df.drop(columns=['Response'])
+
+# Target variable
+y2 = train_df['Response']
+
+# Split the data into training and testing sets
+X_train1, X_test1, y_train2, y_test2 = train_test_split(X1, y2, test_size=0.2, random_state=42)
+
+# Viewing rows and columns
+print("Shape of X_train1:", X_train1.shape)
+print("Shape of y_train2:", y_train2.shape)
+
+# Converting categorical columns to dummy variables
+X_train1 = pd.get_dummies(X_train1)
+X_test1 = pd.get_dummies(X_test1)
+
+# Viewing rows and columns
+print("Shape of X_train1:", X_train1.shape)
+print("Shape of y_train2:", X_test1.shape)
