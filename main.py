@@ -762,3 +762,73 @@ X_test1 = pd.get_dummies(X_test1)
 # Viewing rows and columns
 print("Shape of X_train1:", X_train1.shape)
 print("Shape of y_train2:", X_test1.shape)
+
+# Importing library
+from lightgbm import LGBMClassifier
+import lightgbm as lgb
+
+# Creating LGBM model
+lgbm_model = LGBMClassifier(device='gpu',
+                            num_leaves=31,
+                            max_depth=100,
+                            learning_rate=0.1,
+                            n_estimators=100)
+
+# Model training
+lgbm_model.fit(X_train, y_train)
+
+# LGBM model prediction
+lgbm_model_pred = lgbm_model.predict(X_test)
+
+# Score model
+print("Score model LightGBM:", lgbm_model.score(X_train, y_train))
+
+# Plot the importance of features
+# Importância das features
+importance = lgbm_model.feature_importances_
+feature_names = X_train.columns
+
+# Ordenando pela importância
+indices = np.argsort(importance)
+
+# Limitando o número de features a serem exibidas
+num_features = 30  # Número de features a serem exibidas
+top_indices = indices[-num_features:]
+
+# Plotando a importância das features
+plt.figure(figsize=(20, 10))
+plt.title('Feature Importance')
+plt.barh(range(len(top_indices)), importance[top_indices], align='center')
+plt.yticks(range(len(top_indices)), [feature_names[i] for i in top_indices])
+plt.xlabel('Relative Importance')
+plt.grid(False)
+plt.show()
+
+# Calculate model accuracy
+accuracy = accuracy_score(y_test, lgbm_model_pred)
+print("Accuracy model - LightGBM:", accuracy)
+
+# Create the confusion matrix
+conf_matrix2 = confusion_matrix(y_test, lgbm_model_pred)
+
+# Confusion matrix plot
+plt.figure(figsize=(8, 6))
+sns.heatmap(conf_matrix2, annot=True, fmt='d', cmap='Blues')
+plt.title('Confusion Matrix - LGBM Classifier')
+plt.show()
+
+# ROC curve
+y_pred_proba = lgbm_model.predict_proba(X_test)[:,1]
+fpr, tpr, thresholds = roc_curve(y_test, y_pred_proba)
+auc = roc_auc_score(y_test, y_pred_proba)
+print("Area under the ROC curve LGBM (AUC):", auc)
+
+# Plotagem da curva ROC
+plt.plot(fpr, tpr, label='ROC curve - LGBM (area = %0.2f)' % auc)
+plt.plot([0, 1], [0, 1], 'k--')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Curva ROC - LGBM')
+plt.legend(loc="lower right")
+plt.grid(False)
+plt.show()
