@@ -832,3 +832,76 @@ plt.title('Curva ROC - LGBM')
 plt.legend(loc="lower right")
 plt.grid(False)
 plt.show()
+
+from xgboost import XGBClassifier
+
+# XGBoost Model
+# Parameter tree_method='gpu_hist' for XGBoost GPU
+model_XGBoost = XGBClassifier(tree_method='hist', use_label_encoder=False, eval_metric='logloss', random_state=42)
+model_XGBoost_fit = model_XGBoost.fit(X_train, y_train)
+model_XGBoost
+
+# Score model
+print("Score model XGBoost:", model_XGBoost.score(X_train, y_train))
+
+# XGBoost model prediction
+xgboost_model_pred = model_XGBoost.predict(X_test)
+# Calculate model accuracy
+accuracy = accuracy_score(y_test, xgboost_model_pred)
+print("Accuracy model - XGBoost:", accuracy)
+
+# Create the confusion matrix
+conf_matrix2 = confusion_matrix(y_test, xgboost_model_pred)
+
+# Confusion matrix plot
+plt.figure(figsize=(8, 6))
+sns.heatmap(conf_matrix2, annot=True, fmt='d', cmap='Blues')
+plt.title('Confusion Matrix - XGBoost')
+plt.show()
+
+# ROC curve
+y_pred_proba = model_XGBoost.predict_proba(X_test)[:,1]
+fpr, tpr, thresholds = roc_curve(y_test, y_pred_proba)
+auc = roc_auc_score(y_test, y_pred_proba)
+print("Area under the ROC curve (AUC):", auc)
+
+# Plotagem da curva ROC
+plt.plot(fpr, tpr, label='ROC curve XGBoost (area = %0.2f)' % auc)
+plt.plot([0, 1], [0, 1], 'k--')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Curva ROC - XGBoost')
+plt.legend(loc="lower right")
+plt.grid(False)
+plt.show()
+
+# Classification report model
+class_report = classification_report(y_test, xgboost_model_pred)
+print("Classification report - XGBoost Classifier")
+print(class_report)
+
+# Models to be evaluated
+
+# List to store results
+results = []
+
+# Evaluate each model
+for i, model in enumerate(models):
+
+    # Store results in dictionary
+    results.append({'Model': type(model).__name__,
+                    'Training Accuracy': train_accuracy,
+                    'Testing Accuracy': test_accuracy})
+
+# Convert results list to DataFrame
+results_df = pd.DataFrame(results)
+
+
+# Function to highlight the maximum value in a column
+def highlight_max(s):
+    is_max = s == s.max()
+    return ['background-color: yellow' if v else '' for v in is_max]
+
+
+# Apply the highlight function to the 'Testing Accuracy' columnВ
+results_df.style.apply(highlight_max, subset=['Testing Accuracy'])
