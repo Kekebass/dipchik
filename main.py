@@ -787,3 +787,33 @@ def highlight_max(s):
 # Применение функции выделения к столбцу "Точность тестирования".
 # Применение функции подсветки максимальных значений в столбце 'Точность на тестовых данных'
 results_df.style.apply(highlight_max, subset=['Точность на тестовых данных'])
+
+
+# Импорт библиотеки для моделей машинного обучения метрик
+from sklearn.metrics import accuracy_score, recall_score, f1_score, precision_score
+
+# Список для сохранения результатов
+results = []
+
+# Оценка каждой модели
+for i, model in enumerate(models):
+    model.fit(X_train, y_train)
+    y_test_pred = model.predict(X_test)
+
+    test_accuracy = accuracy_score(y_test, y_test_pred)
+    test_precision = precision_score(y_test, y_test_pred, average='binary')
+    test_recall = recall_score(y_test, y_test_pred, average='binary')
+    test_f1 = f1_score(y_test, y_test_pred, average='binary')
+    test_support = y_test.shape[0]
+
+    # Store results in dictionary
+    results.append({'Model': type(model).__name__,
+                    'Accuracy': test_accuracy,
+                    'Precision': test_precision,
+                    'Recall': test_recall,
+                    'F1-Score': test_f1,
+                    'Support': test_support}
+                   )
+
+# Преобразование списка результатов в DataFrame
+results_df = pd.DataFrame(results)
