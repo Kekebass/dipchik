@@ -817,3 +817,21 @@ for i, model in enumerate(models):
 
 # Преобразование списка результатов в DataFrame
 results_df = pd.DataFrame(results)
+
+# Функция выделения максимального значения в каждом столбце
+def highlight_max(s):
+    is_max = s == s.max()
+    return ['background-color: yellow'
+            if v
+            else ''
+            for v in is_max]
+
+
+# Применение функции выделения к фрейму данных
+styled_results_df = results_df.style.apply(highlight_max, subset=['Accuracy',
+                                                                  'Precision',
+                                                                  'Recall',
+                                                                  'F1-Score'])
+
+# Отображение стилизованного фрейма данных
+styled_results_df
