@@ -835,3 +835,85 @@ styled_results_df = results_df.style.apply(highlight_max, subset=['Accuracy',
 
 # Отображение стилизованного фрейма данных
 styled_results_df
+
+import pandas as pd
+
+# Загрузка набора данных
+train_df = pd.read_csv('train.csv')
+test_df = pd.read_csv('test.csv')
+sample_submission = pd.read_csv('sample_submission.csv ')
+# Обработка пропущенных значений
+train_df = train_df.fillna(-1)
+test_df = test_df.fillna(-1)
+# Кодирование категориальных переменных
+label_encoders = {}
+for column in train_df.select_dtypes(include=['object']).columns:
+    le = LabelEncoder()
+    train_df[column] = le.fit_transform(train_df[column])
+    test_df[column] = le.transform(test_df[column])
+    label_encoders[column] = le
+
+# Просмотр
+le
+
+# Разделение ресурсов и целей
+X = train_df.drop(columns=['id', 'Response'])
+y = train_df['Response']
+X_test = test_df.drop(columns=['id'])
+# Разделение данных обучения и валидации
+X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+# Установка параметров моделей для графического процессора
+params = {'objective': 'binary',
+          'boosting_type': 'gbdt',
+          'num_leaves': 31,
+          'learning_rate': 0.05,
+          'feature_fraction': 0.9,
+          'n_estimators': 100,
+          'device': 'gpu',
+          'gpu_platform_id': 0,
+          'gpu_device_id': 0,
+          'metric': 'auc'}
+
+# Создание наборов данных LightGBM
+train_data = lgb.Dataset(X_train, label=y_train)
+val_data = lgb.Dataset(X_val, label=y_val, reference=train_data)
+
+# Обучение модели LightGBM
+lgbm_model = lgb.train(params,
+                       train_data,
+                       valid_sets=[val_data])
+
+# Просмотр модели
+lgbm_model
+
+# Создание прогнозов на основе тестового набора
+y_test_pred = lgbm_model.predict(X_test, num_iteration=lgbm_model.best_iteration)
+# Проверка длины тестовых данных и прогнозов
+print(f"Длина тестового набора: {len(test_df)}")
+print(f"Длина предсказаний: {len(y_test_pred)}")
+
+# Проверяем соответствие размеров
+if len(test_df) == len(y_test_pred):
+    # Создаем DataFrame с результатами
+    submission = pd.DataFrame({
+        'id': test_df['id'],
+        'Response': y_test_pred
+    })
+
+    # Проверяем первые несколько строк
+    print("\nПервые 5 предсказаний:")
+    print(submission.head())
+
+    # Сохраняем в файл
+    submission_file = 'submission.csv'
+    submission.to_csv(submission_file, index=False)
+    print(f"\nРезультаты успешно сохранены в файл: {submission_file}")
+else:
+    print("\nОшибка: количество строк в тестовых данных и предсказаниях не совпадает")
+    print("Проверьте данные и модель")
+
+# Просмотр набора данных
+jf = pd.read_csv("sample_submission.csv")
+
+# Просмотр первых 10 данных
+jf.head(10)
