@@ -917,3 +917,128 @@ jf = pd.read_csv("sample_submission.csv")
 
 # Просмотр первых 10 данных
 jf.head(10)
+
+from sklearn.ensemble import VotingClassifier
+from sklearn.utils.class_weight import compute_class_weight
+from sklearn.exceptions import ConvergenceWarning
+import numpy as np
+from datetime import datetime
+import joblib
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import AdaBoostClassifier
+from xgboost import XGBClassifier
+from lightgbm import LGBMClassifier
+import warnings
+
+# Полное подавление нежелательных предупреждений
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=ConvergenceWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
+
+# Безопасный расчет весов классов
+try:
+    class_weights = compute_class_weight(
+        'balanced',
+        classes=np.unique(y_train),
+        y=y_train
+    )
+    class_weight_dict = {0: class_weights[0], 1: class_weights[1]}
+except Exception as e:
+    print(f"Ошибка при расчете весов классов, используется 'balanced': {str(e)}")
+    class_weight_dict = 'balanced'
+
+# Расчет scale_pos_weight с обработкой исключений
+try:
+    scale_pos_weight = len(y_train[y_train == 0]) / max(1, len(y_train[y_train == 1]))
+except Exception as e:
+    print(f"Ошибка при расчете scale_pos_weight, используется значение 1: {str(e)}")
+    scale_pos_weight = 1
+
+# Оптимизированные модели без устаревших параметров
+trained_models = [
+    GaussianNB(),
+
+    DecisionTreeClassifier(
+        random_state=42,
+        class_weight=class_weight_dict,
+        max_depth=5,
+        min_samples_split=10
+    ),
+
+    LogisticRegression(
+        random_state=50,
+        class_weight=class_weight_dict,
+        max_iter=1000,
+        solver='saga',
+        n_jobs=-1,
+        penalty='elasticnet',
+        l1_ratio=0.5
+    ),
+
+    AdaBoostClassifier(
+        random_state=45,
+        n_estimators=100,
+        learning_rate=0.1
+    ),
+
+    XGBClassifier(
+        scale_pos_weight=scale_pos_weight,
+        eval_metric='logloss',
+        random_state=42,
+        n_estimators=150,
+        n_jobs=-1,
+        enable_categorical=True
+    ),
+
+    LGBMClassifier(
+        class_weight=class_weight_dict,
+        random_state=42,
+        n_estimators=120,
+        verbose=-1,
+        boosting_type='gbdt',
+        num_leaves=31
+    )
+]
+
+model_names = [type(m).__name__ for m in trained_models]
+
+# Создание и обучение ансамбля
+try:
+    ensemble = VotingClassifier(
+        estimators=list(zip(model_names, trained_models)),
+        voting='soft',
+        n_jobs=-1,
+        verbose=1
+    )
+
+    print("Начало обучения ансамбля...")
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        ensemble.fit(X_train, y_train)
+    print("Обучение завершено успешно!")
+
+    # Сохранение модели
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    ensemble_filename = f"trained_ensemble_{timestamp}.joblib"
+    joblib.dump(ensemble, ensemble_filename, compress=3)
+
+    print("\n" + "=" * 50)
+    print(f"Ансамбль успешно сохранен как: {ensemble_filename}")
+    print("=" * 50)
+
+    # Рекомендации по проверке
+    print("\nРекомендуемые команды для проверки:")
+    print("from sklearn.metrics import classification_report, roc_auc_score")
+    print("y_pred = ensemble.predict(X_test)")
+    print("y_proba = ensemble.predict_proba(X_test)[:, 1]")
+    print("print(classification_report(y_test, y_pred))")
+    print(f"ROC-AUC: {roc_auc_score(y_test, y_proba):.4f}")
+
+except Exception as e:
+    print(f"\nОшибка при работе с ансамблем: {str(e)}")
+    print("Рекомендации:")
+    print("1. Проверьте размерности X_train и y_train")
+    print("2. Убедитесь, что все признаки числовые")
+    print("3. Проверьте наличие пропущенных значений")
